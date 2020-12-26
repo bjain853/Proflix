@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 //have to add file operations too
 
-const startStream = (path,res,req) => {
-    console.log(path);
+const startStream = (path, res, req) => {
+    console.log(req.headers.range);
     const stat = fs.statSync(path)
     const fileSize = stat.size
     const range = req.headers.range
@@ -38,7 +38,7 @@ const startStream = (path,res,req) => {
 }
 
 module.exports = {
-    create: (request, response) => {
+    addMovie: (request, response) => {
         if (request.body == null || request.body.movieId == null || request.body.file_path == null) {
             response.sendStatus(400);
         } else {
@@ -90,9 +90,9 @@ module.exports = {
         } else {
             connection.query("SELECT file_path FROM moviefile WHERE movieId = ?", [request.body.movieId], (err, result) => {
                 if (err) throw err;
-                startStream(result[0].file_path,response,request);
+                startStream(result[0].file_path, response, request);
             })
-            
+
         }
     }
 
