@@ -1,6 +1,5 @@
 const connection = require("../Controllers/connection");
 const fs = require("fs");
-const path = require("path");
 const startStream = require("../utils/StreamFunctions");
 const { v4: uuidv4 } = require('uuid');
 const utils = require("../utils/fileFunctions");
