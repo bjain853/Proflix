@@ -6,9 +6,6 @@ const session = require("express-session");
 const passport = require("passport");
 
 
-
-
-
 /****Middlewares***********/
 server.use(express.urlencoded({extended:false}));
 server.use(express.json())

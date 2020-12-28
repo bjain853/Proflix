@@ -6,12 +6,12 @@ module.exports = (passport) => {
 
     passport.use(new LocalStrategy((username, password, done) => {
         UserActions.findUserByUsername(username, (error, user) => {
-            if (error) throw error;
-            if (!user) return done(null, false);
+            if (error) done(error);
+            if (!user) return done(null, false, { message: "Incorrect username" });
             bcrypt.compare(password, user.password, (error, same) => {
-                if (error) throw error;
+                if (error) done(error);
                 if (same) { return done(null, user); }
-                else { return done(null, false); }
+                else { return done(null, false, { message: "Incorrect Password" }); }
             })
         })
     }
