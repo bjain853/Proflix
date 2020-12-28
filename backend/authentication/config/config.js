@@ -6,5 +6,6 @@ module.exports= {
     sqlPassword:process.env.SQL_PASSWORD || "***REMOVED***",
     sqlDb : process.env.SQL_DB || "proflix",
     appUrl : process.env.APP_URL || "http://localhost:4000",
+    sqlHost : process.env.SQL_HOST || "localhost"
 
 }

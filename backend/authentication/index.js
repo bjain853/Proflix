@@ -3,6 +3,8 @@ const server = express();
 const config = require("./config/config");
 const authentication = require("./Routes/authentication");
 const session = require("express-session");
+const passport = require("passport");
+
 
 
 
@@ -11,16 +13,16 @@ const session = require("express-session");
 server.use(express.urlencoded({extended:false}));
 server.use(express.json())
 server.use(session({
-    secret:"proflix server",
+    secret:"authentication",
     resave:true,
     saveUninitialized:true,
 }))
+server.use(passport.initialize());
+server.use(passport.session());
+require("./config/passport")(passport);
 
 /****** Routes ****/
 server.use("/api",authentication);
-server.get("/",(req,res)=>{
-    res.send("<h1>Welcome to Homepage of localhost:3002 api </h1>");
-})
 
 /**Start server*****/
 server.listen(config.port,()=>{

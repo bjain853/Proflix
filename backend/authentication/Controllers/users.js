@@ -2,99 +2,114 @@
 +----------+--------------+------+-----+---------+-------+
 | Field    | Type         | Null | Key | Default | Extra |
 +----------+--------------+------+-----+---------+-------+
-| uId      | varchar(255) | NO   | PRI | NULL    |       |
-| username | varchar(150) | YES  |     | NULL    |       |
+| username | varchar(150) | NO   | YES | NULL    |       |
 | name     | varchar(255) | YES  |     | NULL    |       |
 | email    | varchar(255) | YES  |     | NULL    |       |
 | password | varchar(400) | YES  |     | NULL    |       |
 +----------+--------------+------+-----+---------+-------+
 */
+
 const connection = require("./connection");
-const { v4: uuidv4 } = require('uuid');
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
-    findUserByUsername: (username,callback) => {
+    findUserByUsername: (username, callback) => {
+        //returns either error or user object
         connection.query("SELECT * FROM users WHERE username = ?", [username], (err, result) => {
-            callback(err,{ name: result[0].name, username: result[0].username, email: result[0].email, password: result[0].password,uId:result[0].uId });
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    name: result[0].name, username: result[0].username, email: result[0].email, password:
+                        result[0].password, uId: result[0].uId
+                });
+            }
         });
     },
-    deleteUser: (request, response) => {
-        if (request.body == null || request.body.id == null) {
-            response.sendStatus(400);
-        } else {
-            connection.quuery("DELETE FROM users WHERE uId = ?", [request.body.id], (err) => {
-                if (err) throw err;
+    findUserById: (id, callback) => {
+        connection.query("SELECT * FROM users WHERE uId = ?", [id], (err, result) => {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    name: result[0].name, username: result[0].username, email: result[0].email, password:
+                        result[0].password, uId: result[0].uId
+                });
+            }
+        });
+    },
+    deleteUser: (uId, callback) => {
+        //returns either the erorr or confirmation of being deleted
+        connection.quuery("DELETE FROM users WHERE uId = ?", [uId], (err) => {
+            if (err) {
+                callback(err, false);
+            } else {
                 console.log("Deleted the user");
-            });
-        }
+                callback(null, true);
+            }
+
+        });
+
     },
-    updateInfo: (request, response) => {
-        if (request.body == null || request.body.field == null || request.body.update == null || request.body.id == null) {
-            response.sendStatus(400);
-        } else {
-            connection.quuery("UPDATE users SET ? = ? WHERE uId = ?", [request.body.field, request.body.update, request.body.id], (err) => {
-                if (err) throw err;
+    updateInfo: (uId, field, update, callback) => {
+        // returns either the error or the updated user Object
+        connection.quuery("UPDATE users SET ? = ? WHERE uId = ?", [field, update, uId], (err) => {
+            if (err) {
+                callback(err, false);
+            } else {
                 console.log("Updated the user");
-            })
-        }
+                callback(null, true);
+            }
+        })
     },
-    addUser: (request, response) => {
-        const { password, email, username, name } = request.body;
-        if (!password || !email || !username || !name) {
-            response.sendStatus(400);
-        } else {
-            try {
-                connection.beginTransaction((error) => {
+    addUser: (name, username, email, password, callback) => {
+        //returns either the error or confirmation that 
+        try {
+            connection.beginTransaction((error) => {
+                if (error) return connection.rollback(() => {
+                    throw error;
+                })
+                connection.query("SELECT * FROM users WHERE username = ?", [username], (error, results) => {
                     if (error) return connection.rollback(() => {
                         throw error;
                     })
-                    connection.query("SELECT * FROM users WHERE username = ? OR email = ?", [username, email], (error, results) => {
-                        if (error) return connection.rollback(() => {
-                            throw error;
-                        })
-                        if (results.length == 0) {
-                            const uId = uuidv4(); //generate userId
-                            /**
-                             * Generate hashed password
-                             */
-                            bcrypt.genSalt(10, (err, salt) => {
-                                if (err) throw err;
-                                bcrypt.hash(password, salt, (err, hash) => {
-                                    if (err) throw err;
-                                    connection.query("INSERT INTO users VALUES (?,?,?,?,?)", [uId, username, name, email, hash], (error, results) => {
-                                        if (error) {
-                                            return connection.rollback(() => {
-                                                throw error;
-                                            })
-                                        }
-                                        else {
-                                            response.sendStatus(200);
-                                            console.log("User added");
-                                        }
-
-                                    });
+                    if (results.length == 0) {
+                        const uId = uuidv4();
+                        /**
+                         * Generate hashed password
+                         */
+                        bcrypt.hash(password, 10, (err, hash) => {
+                            if (err) throw err;
+                            connection.query("INSERT INTO users VALUES (?,?,?,?,?)", [uId, username, name, email, hash],
+                                (error) => {
+                                    if (error) {
+                                        return connection.rollback(() => {
+                                            throw error;
+                                        })
+                                    }
+                                    else {
+                                        console.log("User added");
+                                        callback(null, true);
+                                    }
 
                                 })
-                            })
-                            connection.commit((error) => {
-                                if (error) return connection.rollback(() => {
-                                    throw error;
-                                })
-                            })
-                        } else {
-                            console.error("Email/username already registered")
-                            response.sendStatus(409);
                         }
-                    });
-                })
-            } catch (error) {
-                console.error(error);
-                response.sendStatus(500);
-            } finally {
-
-            }
+                        )
+                        connection.commit((error) => {
+                            if (error) return connection.rollback(() => {
+                                throw error;
+                            })
+                        })
+                    } else {
+                        callback(new Error("Username already registered"), false);
+                    }
+                });
+            })
+        } catch (error) {
+            console.error(error);
+            callback(error, false);
         }
     }
-
 }
+
