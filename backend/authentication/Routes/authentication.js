@@ -29,26 +29,24 @@ router.post('/register', async (req, res) => {
         if (!name || !username || !email || !password) {
             res.sendStatus(400);
         } else {
-            UserActions.addUser(name, username, email, password, (err, isAdded) => {
-                if (err) {
-                    if (err.message === "Username already registered") {
-                        res.sendStatus(409);
-                    } else {
-                        res.sendStatus(500);
-                    }
+            UserActions.addUser(name, username, email, password).then(() => {
+                res.sendStatus(201);
+            }).catch((error) => {
+
+                if (error.message === "Username already registered") {
+                    res.sendStatus(409);
                 } else {
-                    if (isAdded)
-                        res.sendStatus(201);
+                    res.sendStatus(500);
                 }
-            })
+            });
         }
     }
-
 });
+
 
 router.get('/logout', (req, res) => {
     req.logout();
-    if(!req.user) res.sendStatus(200);
+    if (!req.user) res.sendStatus(200);
     else res.sendStatus(406);
 })
 

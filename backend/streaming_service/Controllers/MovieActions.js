@@ -1,6 +1,5 @@
 const connection = require("../Controllers/connection");
 const fs = require("fs");
-const startStream = require("../utils/StreamFunctions");
 const { v4: uuidv4 } = require('uuid');
 const utils = require("../utils/fileFunctions");
 
@@ -9,61 +8,70 @@ const utils = require("../utils/fileFunctions");
  * addMovie adds the movie to database by assigning an id to the movie associated to file and renaming the file to id and adding new file path to db
  */
 module.exports = {
-    addMovie: (request, response) => {
-        if (request.body == null || request.body.file_path == null) {
-            response.sendStatus(400);
-        } else {
+    addMovie: (file_path) => {
+        return new Promise((resolve, reject) => {
             try {
                 const movieId = uuidv4();
                 console.log(movieId);
-                const newPath = utils.filePathNew(request.body.file_path, movieId, response); // renames file to mId and returns new path
+                const newPath = utils.filePathNew(file_path, movieId); // renames file to mId and returns new path
                 connection.query("INSERT INTO moviefile (mId,file_path) VALUES (?,?)", [movieId, newPath], (err, results) => {
                     if (err) {
                         throw err;
                     }
                     console.log('Inserted ' + results.affectedRows + ' rows');
-                    response.json({ movieId: movieId });
+                    resolve({ movieId: movieId });
                 })
             }
             catch (error) {
-                response.sendStatus(500);
+                reject(error);
             }
+        })
 
-        }},
-        deleteMovieFileById: (request, response) => {
-            if (request.body == null || request.body.movieId == null) {
-                response.sendStatus(400);
-            } else {
+    },
+    deleteMovieFileById: (movieId) => {
+        return new Promise((resolve, reject) => {
+            try {
                 var fileToDelete;
-                connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [request.body.movieId], (error, result) => {
+                connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [movieId], (error, result) => {
                     if (error) throw error;
+                    if (result.length == 0) {
+                        resolve(404);
+                    }
                     fileToDelete = result[0].file_path;
                     fs.unlinkSync(fileToDelete);
                 })
-                connection.query("DELETE FROM moviefile WHERE mId = ?", [request.body.movieId], (err, result) => {
+                connection.query("DELETE FROM moviefile WHERE mId = ?", [movieId], (err, result) => {
                     if (err) {
-                        response.sendStatus(500);
                         throw err;
                     }
                     console.log('Deleted ' + result.affectedRows + ' rows');
-                    response.sendStatus(200);
+                    resolve(200);
                 });
+
+
+            } catch (error) {
+                reject(error);
             }
 
-        },
-            getMovieById: (request, response) => {
-                if (request.body == null || request.body.movieId == null) {
-                    response.sendStatus(400);
+        })
+
+
+    },
+    getMovieById: (movieId) => {
+        return new Promise((resolve, reject) => {
+            connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [movieId], (err, result) => {
+                if (err) {
+                    reject(err);
+                } if (result.length === 0) {
+                    reject(new Error("Invalid movieId"));
                 } else {
-                    connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [request.body.movieId], (err, result) => {
-                        if (err) {
-                            response.sendStatus(500);
-                            throw err;
-                        }
-                        startStream(result[0].file_path, response, request);
-                    })
-
+                    resolve(result[0].file_path);
                 }
-            }
+                //have to do something else
+
+            })
+        })
 
     }
+
+}

@@ -1,8 +1,10 @@
 const fs = require("fs");
-const startStream = (path, res, req) => {
+
+const startStream = (path, request, response) => {
     const stat = fs.statSync(path)
     const fileSize = stat.size
-    const range = req.headers.range
+
+    const range = request.headers.range
     if (range) {
         const parts = range.replace(/bytes=/, "").split("-")
         const start = parseInt(parts[0], 10)
@@ -19,15 +21,15 @@ const startStream = (path, res, req) => {
             'Content-Type': 'video/mp4',
         }
 
-        res.writeHead(206, head)
-        file.pipe(res)
+        response.writeHead(206, head)
+        file.pipe(response)
     } else {
         const head = {
             'Content-Length': fileSize,
             'Content-Type': 'video/mp4',
         }
-        res.writeHead(200, head)
-        fs.createReadStream(path).pipe(res)
+        response.writeHead(200, head)
+        fs.createReadStream(path).pipe(response)
     }
 
 }
