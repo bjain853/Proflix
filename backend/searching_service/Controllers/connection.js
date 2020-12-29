@@ -2,9 +2,6 @@ const mysql = require("mysql");
 
 require("dotenv").config()
 
-const express = require("express");
-
-const server=express()
 
 // Create a connection to the database
 const connection = mysql.createConnection({
@@ -20,5 +17,4 @@ connection.connect(error => {
   console.log("Successfully connected to the database.");
 });
 
-
-server.listen(3001)
+exports.module=connection
