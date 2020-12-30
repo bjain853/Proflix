@@ -115,8 +115,8 @@ module.exports = {
    updateMovieById: (movieId, field, value) => {
         return new Promise((resolve, reject) => {
             try {
-                
-                connection.query("UPDATE movies SET ? = ? WHERE m_id = ?", [field, value, movieId], (err, result) => {
+                var query = `UPDATE movies SET ${field} = '${value}' WHERE m_id = ${movieId}`;
+                connection.query(query, (err, result) => {
                     if (err) {
                         reject(err);
                         return;
