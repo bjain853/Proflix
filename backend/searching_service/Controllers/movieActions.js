@@ -5,27 +5,60 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
 
-    addMovie: (file_path, title, release_year, imdb_link) => {
+    addMovie: (filepath, title, release_year, imdb_link) => {
+
+
         return new Promise((resolve, reject) => {
             try {
-                const movieId = uuidv4();
-                console.log(movieId);
-                
-                connection.query("INSERT INTO movies (m_id, title, release_year, imdb_link, file_path) VALUES (?,?,?,?,?)", [movieId, title, release_year, imdb_link, file_path ], (err, results) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Inserted ' + results.affectedRows + ' rows');
-                    resolve({ movieId: movieId });
+                connection.beginTransaction((error) => {
+                    if (error) return connection.rollback(() => {
+                        throw error;
+                    })
+                    connection.query("SELECT * FROM movies WHERE title = ? and release_year = ?", [title, release_year], (error, results) => {
+                        if (error) return connection.rollback(() => {
+                            throw error;
+                        })
+                        if (results.length == 0) {
+                            const movieId = uuidv4();
+                            console.log(movieId);
+                            
+                                
+                                connection.query("INSERT INTO movies (m_id, title, release_year, imdb_link, filepath) VALUES (?,?,?,?,?)", [movieId, title, release_year, imdb_link, filepath],
+                                    (error) => {
+                                        if (error) {
+                                            return connection.rollback(() => {
+                                                throw error;
+                                            })
+                                        }
+                                        else {
+                                            console.log("Movie added");
+                                            resolve(201);
+                                        }
+
+                                    })
+                            
+                            
+                            connection.commit((error) => {
+                                if (error) return connection.rollback(() => {
+                                    
+                                    throw error;
+                                })
+                            })
+                        } else {
+                            reject(Error("Movie already exists"));
+                        }
+                    });
                 })
-            }
-            catch (error) {
+            } catch (error) {
+                console.log(error);
                 reject(error);
             }
         })
+        //returns either the error or confirmation that 
 
     },
 
+       
     deleteMovieFileById: (movieId) => {
         return new Promise((resolve, reject) => {
             try {

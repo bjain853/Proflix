@@ -100,7 +100,27 @@ router.put('/updateMovieById', (request, response) => {
             })
 
     };
+
 })
 
+
+router.put('/addMovie', (request, response) => {
+    if (!request.body || !request.body.filepath || !request.body.title) {
+        console.log(request.body);
+        response.sendStatus(400);
+    } else {
+        movieActions.addMovie(request.body.filepath, request.body.title, request.body.release_year, request.body.imdb_link)
+            .then(status => response.sendStatus(status))
+            .catch((error) => {
+                if (error.message=== "Movie already exists") {
+                    response.sendStatus(409);
+                } else {
+                    console.log(error.stack)
+                    response.sendStatus(500)
+                }
+            })
+
+    };
+})
 
 module.exports = router;
