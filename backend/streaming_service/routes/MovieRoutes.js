@@ -1,48 +1,68 @@
 const express = require("express");
 const router = express.Router()
-const MovieActions = require("../Controllers/MovieActions");
-const startStream = require("../utils/StreamFunctions");
+const { getMovieStream, indexMovieById, updateMovieLocation, deleteMovieFile } = require("../Controllers/MovieActions");
 
-router.get('/getMoviebyId', async (request, response) => {
-    if (!request.query || !request.query.movieId) {
+router.post('/getMovieStream', async (request, response) => {
+    if (!request.body || !request.body.filePath) {
         response.sendStatus(400);
     } else {
-        MovieActions.getMovieById(request.query.movieId).then(file_path => {
-            startStream(file_path, request, response);
+        getMovieStream(request.body.filePath, request.headers.range).then(streamObj => {
+            const { head, status, file } = streamObj;
+            response.writeHead(status, head);
+            file.pipe(response);
         }).catch(error => {
-            if (error.message === "Invalid movieId") {
+            if (error.message.includes("ENOENT")) {
+
                 response.sendStatus(404);
             } else {
+                console.log(error);
                 response.sendStatus(500)
 
             }
 
-        })
+        }
+
+        )
 
     }
 })
-router.post('/addMovie', (request, response) => {
-    if (!request.body || !request.body.file_path) {
+router.post('/indexMovieById', (request, response) => {
+    if (!request.body || !request.body.filePath || !request.body.movieId) {
         response.sendStatus(400);
     } else {
-
-        MovieActions.addMovie(request.body.file_path)
-            .then(({ movieId }) => response.json({ movieId: movieId }))
-            .catch(() => response.send(500));
-    }
-
-});
-//router.put('/updateMovieById', (request, response => { MovieActions.updateMovieById(request, response) }));
-router.delete('/deleteMovieById', (request, response) => {
-    if (!request.query || !request.query.movieId) {
-        response.sendStatus(400);
-    } else {
-        MovieActions.deleteMovieFileById(request.query.movieId)
-            .then(status => response.sendStatus(status))
+        indexMovieById(request.body.movieId, request.body.filePath)
+            .then((newPath) => response.json({ newPath }))
             .catch((error) => {
-                if (error.message === "Invalid movieId") {
+                console.log(error);
+                response.sendStatus(500)
+            });
+    }
+});
+
+router.put('/updateMovieLocation', ((request, response) => {
+    if (!request.body || !request.body.old_filePath || !request.body.new_directory) {
+        response.sendStatus(400);
+    } else {
+        updateMovieLocation(request.body.old_filePath, request.body.newDirectory).then((newPath) => response.json({ new_filePath: newPath })).catch(error => {
+            {
+                console.error(error);
+                response.sendStatus(500);
+            };
+        });
+    }
+}));
+
+router.delete('/deleteMovieFile', (request, response) => {
+    if (!request.body || !request.body.filePath) {
+        response.sendStatus(400);
+    } else {
+        deleteMovieFile(request.body.filePath)
+            .then(() => response.sendStatus(200))
+            .catch((error) => {
+                if (error.message.includes("ENOENT")) {
                     response.sendStatus(404);
                 } else {
+                    console.log(error);
                     response.sendStatus(500)
                 }
             })

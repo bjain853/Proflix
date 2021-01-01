@@ -1,77 +1,95 @@
-const connection = require("../Controllers/connection");
-const fs = require("fs");
-const { v4: uuidv4 } = require('uuid');
-const utils = require("../utils/fileFunctions");
-
+const { rename, unlinkSync, statSync, createReadStream} = require("fs");
+const { basename } = require("path");
 
 /**
  * addMovie adds the movie to database by assigning an id to the movie associated to file and renaming the file to id and adding new file path to db
  */
 module.exports = {
-    addMovie: (file_path) => {
+    indexMovieById: (movieId, file_path) => {
         return new Promise((resolve, reject) => {
             try {
-                const movieId = uuidv4();
-                console.log(movieId);
-                const newPath = utils.filePathNew(file_path, movieId); // renames file to mId and returns new path
-                connection.query("INSERT INTO moviefile (mId,file_path) VALUES (?,?)", [movieId, newPath], (err, results) => {
-                    if (err) {
-                        throw err;
+                const directories = dirname(file_path);
+                const extension = extname(file_path);
+                const newPath = directories + `/${movieId}` + extension;
+                rename(file_path, newPath, (error) => {
+                    if (error) {
+                        reject(error);
                     }
-                    console.log('Inserted ' + results.affectedRows + ' rows');
-                    resolve({ movieId: movieId });
-                })
-            }
-            catch (error) {
-                reject(error);
-            }
-        })
-
-    },
-    deleteMovieFileById: (movieId) => {
-        return new Promise((resolve, reject) => {
-            try {
-                var fileToDelete;
-                connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [movieId], (error, result) => {
-                    if (error) throw error;
-                    if (result.length == 0) {
-                        resolve(404);
-                    }
-                    fileToDelete = result[0].file_path;
-                    fs.unlinkSync(fileToDelete);
-                })
-                connection.query("DELETE FROM moviefile WHERE mId = ?", [movieId], (err, result) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Deleted ' + result.affectedRows + ' rows');
-                    resolve(200);
                 });
-
-
+                resolve(newPath);
             } catch (error) {
                 reject(error);
             }
 
+
+        })
+
+    },
+    deleteMovieFile: (file_path) => {
+        return new Promise((resolve, reject) => {
+            try {
+                unlinkSync(file_path);
+                resolve(true);
+            } catch (error) {
+                reject(error);
+            }
         })
 
 
     },
-    getMovieById: (movieId) => {
+    getMovieStream: (file_path, range) => {
         return new Promise((resolve, reject) => {
-            connection.query("SELECT file_path FROM moviefile WHERE mId = ?", [movieId], (err, result) => {
-                if (err) {
-                    reject(err);
-                } if (result.length === 0) {
-                    reject(new Error("Invalid movieId"));
+            try {
+                const fileSize = statSync(file_path).size;
+                if (range) {
+                    const parts = range.replace(/bytes=/, "").split("-");
+                    const start = parseInt(parts[0], 10);
+                    const end = parts[1]
+                        ? parseInt(parts[1], 10)
+                        : fileSize - 1;
+
+                    const chunksize = (end - start) + 1;
+                    const file = createReadStream(file_path, { start, end });
+                    const head = {
+                        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                        'Accept-Ranges': 'bytes',
+                        'Content-Length': chunksize,
+                        'Content-Type': 'video/mp4',
+                    }
+                    resolve({ head, file, status: 206 });
+
                 } else {
-                    resolve(result[0].file_path);
+                    const head = {
+                        'Content-Length': fileSize,
+                        'Content-Type': 'video/mp4',
+                    }
+                    const file = createReadStream(file_path);
+                    resolve({ head, file, status: 200 });
                 }
-                //have to do something else
-
-            })
+            } catch (error) {
+                reject(error);
+            }
         })
+    },
 
+    updateMovieLocation: (old_filepath, new_directory) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const fileName = basename(old_filepath);
+                const newPath = `${new_directory}/${fileName}`;
+                rename(old_filepath, newPath, (error) => {
+                    if (error) {
+                        reject(error);
+                    }
+                });
+                resolve(newPath);
+            } catch (error) {
+                reject(error);
+            }
+
+
+        })
     }
+
 
 }

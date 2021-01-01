@@ -3,7 +3,6 @@ const config = require("./config")
 const server = express();
 //const cors = require("cors");
 const mainRouter = require("./routes/index");
-const connection = require("./Controllers/connection");
 
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
