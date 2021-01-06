@@ -1,11 +1,75 @@
-const { request, response } = require("express");
 const express = require("express");
 const router = express.Router()
-const MovieActions = require("../Controllers/MovieActions");
+const { getMovieStream, indexMovieById, updateMovieLocation, deleteMovieFile } = require("../Controllers/MovieActions");
 
-router.get('/getMoviebyId', (request, response) => { MovieActions.getMovieById(request, response) });
-router.post('/addMovie', (request, response) => { MovieActions.addMovie(request, response) });
-//router.put('/updateMovieById', (request, response => { MovieActions.updateMovieById(request, response) }));
-router.delete('/deleteMovieById', (request, response) => { MovieActions.deleteMovieFileById(request, response) });
+router.post('/getMovieStream', async (request, response) => {
+    if (!request.body || !request.body.filePath) {
+        response.sendStatus(400);
+    } else {
+        getMovieStream(request.body.filePath, request.headers.range).then(streamObj => {
+            const { head, status, file } = streamObj;
+            response.writeHead(status, head);
+            file.pipe(response);
+        }).catch(error => {
+            if (error.message.includes("ENOENT")) {
+
+                response.sendStatus(404);
+            } else {
+                console.log(error);
+                response.sendStatus(500)
+
+            }
+
+        }
+
+        )
+
+    }
+})
+router.post('/indexMovieById', (request, response) => {
+    if (!request.body || !request.body.filePath || !request.body.movieId) {
+        response.sendStatus(400);
+    } else {
+        indexMovieById(request.body.movieId, request.body.filePath)
+            .then((newPath) => response.json({ newPath }))
+            .catch((error) => {
+                console.log(error);
+                response.sendStatus(500)
+            });
+    }
+});
+
+router.put('/updateMovieLocation', ((request, response) => {
+    if (!request.body || !request.body.old_filePath || !request.body.new_directory) {
+        response.sendStatus(400);
+    } else {
+        updateMovieLocation(request.body.old_filePath, request.body.newDirectory).then((newPath) => response.json({ new_filePath: newPath })).catch(error => {
+            {
+                console.error(error);
+                response.sendStatus(500);
+            };
+        });
+    }
+}));
+
+router.delete('/deleteMovieFile', (request, response) => {
+    if (!request.body || !request.body.filePath) {
+        response.sendStatus(400);
+    } else {
+        deleteMovieFile(request.body.filePath)
+            .then(() => response.sendStatus(200))
+            .catch((error) => {
+                if (error.message.includes("ENOENT")) {
+                    response.sendStatus(404);
+                } else {
+                    console.log(error);
+                    response.sendStatus(500)
+                }
+            })
+
+    };
+
+}
+)
 
 module.exports = router;
