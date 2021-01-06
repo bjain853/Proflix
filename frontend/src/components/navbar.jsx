@@ -4,7 +4,7 @@ import Link from "next/link";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import IOSSwitch from "../components/IOSSwitch";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme=>({
   root: {
     flexGrow: 2,
     flexDirection: "row",
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     cursor: "pointer",
     marginRight: "30rem",
     "&:hover": {
-      color: "#4E8397",
+      color: theme.palette.primary.main,
     },
     fontFamily: "Helvetica",
     fontWeight: "bold",
@@ -23,10 +23,10 @@ const useStyles = makeStyles({
     cursor: "pointer",
     marginRight: "5rem",
     "&:hover": {
-      color: "#4E8397",
+      color: theme.palette.primary.main,
     },
   },
-});
+}));
 
 const NavBar = (props) => {
   const classes = useStyles();
@@ -38,7 +38,7 @@ const NavBar = (props) => {
     <AppBar color="secondary">
       <Toolbar className={classes.root}>
         <Link href="/">
-          <Typography className={classes.logo} variant="h3">
+          <Typography className={classes.logo,classes.links} variant="h3">
             PROFLIX
           </Typography>
         </Link>

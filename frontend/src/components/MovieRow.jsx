@@ -6,25 +6,24 @@ import { GridList, Typography, Grid } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    paddingTop:"2rem" ,
+    padding:"0.3rem",
     display: "flex",
-    overflowX: "hidden", //horizontal
-    overflowY: "hidden", //vertical
+    overflowX: "visible", //horizontal
+    overflowY: "visible", //vertical
     background: theme.palette.background.paper,
-  },
-  media: {
-    padding: "3rem",
+
+    marginTop:"2rem",
   },
   gridList: {
     flexWrap: "nowrap",
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: "translateZ(0)",
-    overflowX:"auto",
+    transform: "translateZ(0)",  
   },
-  genre:{
-    marginLeft:"2rem",
-    textWeight:"800",
-  }
+  genre: {
+    marginLeft: "2rem",
+    textWeight: "800",
+    marginBottom:"1rem",
+  },
 }));
 
 export default function MovieRow({ movieObj }) {
@@ -33,8 +32,10 @@ export default function MovieRow({ movieObj }) {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Typography className={classes.genre} variant="h3">{movieObj.genre}</Typography>
-        <GridList className={classes.gridList} cols={2.5}>
+        <Typography className={classes.genre} variant="h3">
+          {movieObj.genre}
+        </Typography>
+        <GridList cellHeight={180}  className={classes.gridList} cols={2.5}>
           {movieObj.movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}

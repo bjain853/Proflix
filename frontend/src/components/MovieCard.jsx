@@ -1,46 +1,70 @@
-import {
-  GridListTile,
-  GridListTileBar,
-  IconButton,
-  Paper,
-} from "@material-ui/core";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import { GridListTile } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  media: { maxHeight: "240px", maxWidth: "200px" },
-  card: {
-    height: "20%",
-    width: "60%",
+const useStyles = makeStyles({
+  root: {
+    maxWidth: 345,
+    overflowX: "hidden",
+    height: "100%",
   },
-  titleBar: {
-    background:
-      "linear-gradient(to bottom, rgba(0,0,0,0.7) 20%, " +
-      "rgba(0,0,1,0.3) 70%, rgba(0,0,0,0) 100%)",
+  media: {
+    maxHeight: 180,
+    marginTop: "5px",
   },
-  title: {
-    color: theme.palette.secondary.light,
+  summary: {
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
   },
-}));
+});
 
-export default function MovieCard({ movie }) {
+export default function MediaCard({ movie }) {
   const classes = useStyles();
+
   return (
-    <Paper variant="outlined" className={classes.card}>
-      <GridListTile>
-        <img src={movie.pic} alt={movie.title} className={classes.media} />
-        <GridListTileBar
-          title={movie.title}
-          subtitle={movie.year}
-          actionIcon={
-            <IconButton>
-              <PlayArrowIcon />
-            </IconButton>
-          }
-          classes={{ root: classes.titleBar, title: classes.title }}
-        />
-      </GridListTile>
-    </Paper>
+    <GridListTile>
+      <Card className={classes.root}>
+        <CardActionArea>
+          <CardMedia
+            className={classes.media}
+            src={movie.pic}
+            title="Contemplative Reptile"
+            component="img"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h6" component="h2">
+              {movie.title}
+            </Typography>
+            <Typography gutterBottom variant="body1" component="h3">
+              {movie.year}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+              className={classes.summary}
+            >
+              {movie.summary}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button size="small" color="secondary" variant="contained">
+            Play Trailer
+          </Button>
+          <Button size="small" color="secondary" variant="contained">
+            Watch Now
+          </Button>
+        </CardActions>
+      </Card>
+    </GridListTile>
   );
 }
