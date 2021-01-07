@@ -2,17 +2,52 @@
     width:100%;
     height:100%;
     position:relative;
+    margin:0;
 }
 
 .controlsWrapper{
-    position:absolute;
+    position: absolute;
     top:0;
     left:0;
     left:0;
     bottom:0;
+    height:100%;
+    width: 100%;
     background: rgba(0,0,0, 0.6);
     display:flex;
     flex-direction: column;
     justify-content: space-between;
     z-index: 1;
+    border:3px black solid;
+    padding:0;
+}
+
+.controlIcon{
+    font-size: 48;
+    color:rgb(98, 98, 98);
+    transform: scale(1.5);
+
+}
+
+.controlIcon:hover{
+    color:white;
+    transform: scale(2);
+}
+
+.videoTitle{
+    margin-top:20rem;
+    color:white;
+    font-weight: bold;
+}
+
+.bottomIcon{
+    color:rgb(138, 137, 137);
+}
+
+.bottomIcon:hover{
+    color:white;
+}
+
+.volumeSliderContainer{
+    min-width:300px;
 }

@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router()
 const { getMovieStream, indexMovieById, updateMovieLocation, deleteMovieFile } = require("../Controllers/MovieActions");
 
-router.post('/getMovieStream', async (request, response) => {
-    if (!request.body || !request.body.filePath) {
+router.get('/getMovieStream', async (request, response) => {
+    if (!request.query || !request.query.filePath) {
         response.sendStatus(400);
     } else {
-        getMovieStream(request.body.filePath, request.headers.range).then(streamObj => {
+        getMovieStream(request.query.filePath, request.headers.range).then(streamObj => {
             const { head, status, file } = streamObj;
             response.writeHead(status, head);
             file.pipe(response);
