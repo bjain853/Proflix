@@ -1,7 +1,10 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles  from "@material-ui/core/styles/makeStyles";
 import MovieCard from "./MovieCard";
-import { GridList, Typography, Grid } from "@material-ui/core";
+import GridList from "@material-ui/core/GridList";
+import Typography from "@material-ui/core/Typography";
+import  Grid  from "@material-ui/core/Grid";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {

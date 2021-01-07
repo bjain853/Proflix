@@ -1,15 +1,10 @@
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
-
+import { lightBlue } from '@material-ui/core/colors';
 
 export const lightTheme = createMuiTheme({
     palette: {
         type: "light",
-        primary: {
-            main: "#263238",
-            light: "#4f5b62",
-            dark: "#000a12",
-            contrastText: "#fff",
-        },
+        primary:lightBlue,
         secondary: {
             main: "#ffca28",
             light: "#fffd61",

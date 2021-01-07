@@ -5,7 +5,6 @@ import CSSBaseline from "@material-ui/core/CssBaseline";
 
 function Layout(props) {
   const [isDark, setDark] = useState(false);
-  useEffect(() => {}, [isDark]);
   return (
     <ThemeProvider isDark={isDark}>
       <CSSBaseline />

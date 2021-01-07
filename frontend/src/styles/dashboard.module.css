@@ -1,0 +1,6 @@
+.root{
+    margin-top: 3rem;
+    line-height:0.5rem;
+    display: flex;
+    flex-wrap:nowrap;
+  }

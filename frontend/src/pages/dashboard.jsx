@@ -1,7 +1,7 @@
 import React from "react";
 import MovieRow from "../components/MovieRow";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Grid } from "@material-ui/core";
+import classes from '../styles/dashboard.module.css';
 
 
 const Movies = [
@@ -447,26 +447,19 @@ const Movies = [
   },
 ];
 
-const useStyles = makeStyles({
-  root: {
-    marginTop: "3rem",
-    lineHeight: "0.5rem",
-    display: "flex",
-    flexWrap:"nowrap",
-  },
-});
+
 
 export default function dashboard() {
   // Movies.map((item) => {
   //   console.log(item["genre"], item["movies"]);
   // });
-  const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <Grid container>
         {Movies.map((movieObj) => (
-          <Grid item xs={12}>
-            <MovieRow movieObj={movieObj} key={movieObj.id} />
+          <Grid item xs={12} key={movieObj.id}>
+            <MovieRow movieObj={movieObj} />
           </Grid>
         ))}
       </Grid>

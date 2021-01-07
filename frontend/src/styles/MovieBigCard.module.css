@@ -1,0 +1,31 @@
+.root {
+    margin-top: 10rem;
+    width: 100%;
+    justify-items: center;
+  }
+  .container{
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .media{
+    height: 80%;
+    width: 80%;
+    float: left;
+    margin: 1.2rem;
+  }
+  .summary {
+    margin-top: 1rem
+  }
+  .title {
+    margin-left: 2rem;
+  }
+
+  .rating {
+    margin-left: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .playButton {
+    margin-left: 4rem;
+  }

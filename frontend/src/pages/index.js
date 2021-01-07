@@ -2,7 +2,7 @@ import React from 'react'
 
 function Index() {
     return (
-        <div>
+        <div style={{margin:"10rem"}}> 
          Home
         </div>
     )

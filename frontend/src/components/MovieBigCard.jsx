@@ -1,42 +1,11 @@
 import React from "react";
 import { Fab, Grid, Paper, Typography, Container } from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import PlayIconButton from "@material-ui/icons/PlayArrow";
 import Rating from "@material-ui/lab/Rating";
+import classes from '../styles/MovieBigCard.module.css'
 
-const useStyles = makeStyles({
-  root: {
-    marginTop: "10rem",
-    width: "100%",
-    justifyItems: "center",
-  },
-  container: {
-    width: "100%",
-    padding: "1.5rem",
-  },
-  media: {
-    height: "80%",
-    width: "80%",
-    float: "left",
-    margin: "1.2rem",
-  },
-  summary: {
-    marginTop: "1rem",
-  },
-  title: {
-    marginLeft: "2rem",
-  },
-  rating: {
-    marginLeft: "2rem",
-    marginTop: "1.5rem",
-  },
-  playButton: {
-    marginLeft: "4rem",
-  },
-});
 
 function MovieBigCard({ movie }) {
-  const classes = useStyles();
   return (
     <Container className={classes.root}>
       <Paper elevation={2} className={classes.container}>

@@ -1,6 +1,12 @@
 import { lightTheme } from './light';
 import { darkTheme } from './dark';
 
-export function getThemeByState(isDark){
+
+function getThemeByState(isDark){
     return (isDark) ? darkTheme : lightTheme;
 }
+
+export default {
+    defaultTheme : lightTheme,
+    getThemeByState
+};

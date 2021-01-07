@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import Link from "next/link";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import IOSSwitch from "../components/IOSSwitch";
+import classes from '../styles/navbar.module.css';
 
 const useStyles = makeStyles(theme=>({
   root: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles(theme=>({
 }));
 
 const NavBar = (props) => {
-  const classes = useStyles();
+  //const classes = useStyles();
   const { setDark } = props;
   const handleSwitch = (event) => {
     setDark(event.target.checked);
@@ -37,8 +38,8 @@ const NavBar = (props) => {
   return (
     <AppBar color="secondary">
       <Toolbar className={classes.root}>
-        <Link href="/">
-          <Typography className={classes.logo,classes.links} variant="h3">
+        <Link href="/dashboard">
+          <Typography className={classes.logo} variant="h3">
             PROFLIX
           </Typography>
         </Link>
