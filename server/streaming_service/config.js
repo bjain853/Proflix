@@ -2,10 +2,12 @@
 require("dotenv").config()
 
 module.exports = {
-    PORT : process.env.SEARCH_PORT || 3001,
+    PORT : process.env.STREAMING_PORT || 4002,
     HOSTNAME : process.env.HOST || 'localhost',
+    MONGO_URL : process.env.MONGODB_URI,
     SQL_USER : process.env.SQL_USER ,
     SQL_PASSWORD : process.env.SQL_PASSWORD,
-    SQL_DATABASE:process.env.SQL_DATABASE,
+    DB:process.env.SQL_DATABASE,
     APP_URL : process.env.APP_URL, 
 }
+
