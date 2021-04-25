@@ -1,7 +1,7 @@
 require("dotenv").config()
 
 module.exports = {
-    port: process.env.PORT || 3002,
+    port: process.env.AUTH_PORT || 3000,
     sqlUser: process.env.SQL_USER || "root",
     sqlPassword: process.env.SQL_PASSWORD,
     sqlDb: process.env.SQL_DB || "proflix",

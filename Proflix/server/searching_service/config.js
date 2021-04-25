@@ -2,7 +2,7 @@
 require("dotenv").config()
 
 module.exports = {
-    PORT : process.env.PORT || 3001,
+    PORT : process.env.SEARCH_PORT || 3001,
     HOSTNAME : process.env.HOST || 'localhost',
     SQL_USER : process.env.SQL_USER ,
     SQL_PASSWORD : process.env.SQL_PASSWORD,

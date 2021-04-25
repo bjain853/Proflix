@@ -8,12 +8,15 @@ const connection = mysql.createConnection({
   database: config.sqlDb,
 });
 
+console.log(config.sqlHost,config.sqlUser,config.sqlPassword);
+
 connection.connect((err) => {
+  
   if (err) {
     console.error(`Cannot connect to DB @ ${config.sqlHost}`);
     console.error(err.message);
   }
   else console.log(`Connected to DB @ ${config.sqlHost}`);
-})
+});
 
-module.exports = connection
+module.exports = connection;
