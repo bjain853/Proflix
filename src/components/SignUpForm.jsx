@@ -1,59 +1,28 @@
-import { Paper, Button, TextField, Typography, Grid, Container } from '@material-ui/core';
-import React, { useState } from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Paper, Button, TextField, Typography, Grid, Box } from '@material-ui/core';
+import React from 'react';
+import classes from '../styles/signup.module.css';
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		[theme.breakpoints.up('lg')]: {
-			padding: '5rem'
-		},
-		padding: '1rem',
-		height: '100%',
-		width: '100%',
-		alignItems: 'center',
-		justifyContent: 'space-around'
-	},
-	fieldContainer: {
-		[theme.breakpoints.up('lg')]: {
-			padding: '2rem'
-		},
-		padding: '0.5rem',
-		height: '100%',
-		width: '100%',
-		alignItems: 'center'
-	},
-	submit: {
-		marginLeft: '-1px'
-	}
-}));
-
-export default function SignUpForm() {
-	const [ loginInfo, setLoginInfo ] = useState({
-		name: '',
-		email: '',
-		username: '',
-		password: ''
-	});
+export default function SignUpForm({handleSubmit,setSignUpInfo,signUpInfo}) {
+	
+	
 	const handleChange = (event) => {
-		var updatedInfo = { ...loginInfo };
+		let updatedInfo = { ...signUpInfo };
 		updatedInfo[event.target.name] = event.target.value;
-		setLoginInfo(updatedInfo);
+		setSignUpInfo(updatedInfo);
 	};
 
-	const handleSubmit = () => {
-		console.log(loginInfo);
-	};
+	
 
-	const classes = useStyles();
+	/*const classes = useStyles();*/
+
 	return (
-		<Paper className={classes.root} elevation={1}>
-			<Container>
-				<Grid container spacing={1} justify="center" className={classes.fieldContainer}>
+		<Box className={classes.root} component="div">
+			<Grid container direction="column" spacing={5} className={classes.fieldContainer} justify="space-evenly" alignItems="stretch">
+				<Paper elevation={1} style={{ width: '80%',padding:"1rem" }}>
 					<Grid item xs={12}>
 						<TextField
 							placeholder="John Doe"
 							name="name"
-							variant="outlined"
 							label="Name"
 							onChange={handleChange}
 							fullWidth
@@ -63,7 +32,6 @@ export default function SignUpForm() {
 						<TextField
 							placeholder="doejohn@mail.com"
 							name="email"
-							variant="outlined"
 							label="Email"
 							type="email"
 							onChange={handleChange}
@@ -74,7 +42,6 @@ export default function SignUpForm() {
 						<TextField
 							placeholder="doejohn"
 							name="username"
-							variant="outlined"
 							label="Username"
 							onChange={handleChange}
 							fullWidth
@@ -85,24 +52,23 @@ export default function SignUpForm() {
 							label="Password"
 							type="password"
 							name="password"
-							variant="outlined"
 							onChange={handleChange}
 							fullWidth
 						/>
 					</Grid>
-					<Grid item xs={1}>
-						<Button
-							variant="contained"
-							type="submit"
-							color="secondary"
-							onClick={handleSubmit}
-							className={classes.submit}
-						>
-							<Typography>Submit</Typography>{' '}
-						</Button>
+					<Grid item xs={12}>
+					<Button
+						variant="contained"
+						type="submit"
+						color="secondary"
+						onClick={handleSubmit}
+						style={{marginTop:"2rem"}}
+					>
+						<Typography>Submit</Typography>
+					</Button>
 					</Grid>
-				</Grid>
-			</Container>
-		</Paper>
+				</Paper>
+			</Grid>
+		</Box>
 	);
 }

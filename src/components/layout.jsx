@@ -1,6 +1,6 @@
 import ThemeProvider from "../components/ThemeProvider";
 import NavBar from "./navbar";
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import CSSBaseline from "@material-ui/core/CssBaseline";
 
 function Layout(props) {

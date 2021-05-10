@@ -1,8 +1,15 @@
 .root {
-    padding : 15rem;
-border: 3px black solid;
-margin: 0rem;
-height:100vh;
-align-items:center;
-background-image: url(../../public/Formbg.jpg);
+	margin-top: 3rem;
+	background-image: url(../../public/Formbg.jpg);
+	height: 100vh;
+	overflow: auto;
+}
+
+.fieldContainer {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }

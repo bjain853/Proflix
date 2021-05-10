@@ -1,17 +1,25 @@
-import React from "react";
-import LoginForm from "../components/LoginForm";
-import classes from '../styles/login.module.css';
-
-
+import React,{useContext} from 'react';
+import LoginForm from '../components/LoginForm';
+import {AuthContext} from '../stores/authContext';
 
 function Login() {
+	
 
+	const {login} = useContext(AuthContext);
 
-  return (
-    <div className={classes.root}>
-      <LoginForm />
-    </div>
-  );
+	const [ loginInfo, setLoginInfo ] = React.useState({ username: '', password: '' });
+
+	function handleSubmit (){
+		login(loginInfo);
+	};
+
+	return (
+		<LoginForm
+			loginInfo={loginInfo}
+			setLoginInfo={setLoginInfo}
+			handleSubmit={handleSubmit}
+		/>
+	);
 }
 
 export default Login;

@@ -1,22 +1,35 @@
-const mysql = require('mysql2');
-const config = require("../config/config")
+const mysql = require('mysql2/promise');
+const config = require('../config/config');
 
-const connection = mysql.createConnection({
-  host: config.sqlHost,
-  user: config.sqlUser,
-  password: config.sqlPassword,
-  database: config.sqlDb,
-});
+async function ConnectToDB() {
+	return await mysql.createPool({
+		connectionLimit: 10,
+		host: config.sqlHost,
+		user: config.sqlUser,
+		password: config.sqlPassword,
+		database: config.sqlDb
+	});
+}
 
-console.log(config.sqlHost,config.sqlUser,config.sqlPassword);
+try{
 
-connection.connect((err) => {
-  
-  if (err) {
-    console.error(`Cannot connect to DB @ ${config.sqlHost}`);
-    console.error(err.message);
-  }
-  else console.log(`Connected to DB @ ${config.sqlHost}`);
-});
+  const connectionPool = ConnectToDB();
+  console.log("Connected to Database...");
+  module.exports = connectionPool;
 
-module.exports = connection;
+}catch(error){
+  console.log(error);
+}
+
+
+
+// connection.connect((err) => {
+
+//   if (err) {
+//     console.error(`Cannot connect to DB @ ${config.sqlHost}`);
+//     console.error(err.message);
+//   }
+//   else console.log(`Connected to DB @ ${config.sqlHost}`);
+// });
+
+

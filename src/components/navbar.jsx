@@ -1,33 +1,10 @@
 import React from "react";
-import { AppBar, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Toolbar, Typography,Button } from "@material-ui/core";
 import Link from "next/link";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import IOSSwitch from "../components/IOSSwitch";
 import classes from '../styles/navbar.module.css';
+import {AuthContext} from '../stores/authContext';
 
-const useStyles = makeStyles(theme=>({
-  root: {
-    flexGrow: 2,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  logo: {
-    cursor: "pointer",
-    marginRight: "30rem",
-    "&:hover": {
-      color: theme.palette.primary.main,
-    },
-    fontFamily: "Helvetica",
-    fontWeight: "bold",
-  },
-  links: {
-    cursor: "pointer",
-    marginRight: "5rem",
-    "&:hover": {
-      color: theme.palette.primary.main,
-    },
-  },
-}));
 
 const NavBar = (props) => {
   //const classes = useStyles();
@@ -35,6 +12,8 @@ const NavBar = (props) => {
   const handleSwitch = (event) => {
     setDark(event.target.checked);
   };
+ const {user,logout} = React.useContext(AuthContext);
+
   return (
     <AppBar color="secondary">
       <Toolbar className={classes.root}>
@@ -43,16 +22,24 @@ const NavBar = (props) => {
             PROFLIX
           </Typography>
         </Link>
-        <Link href="/signup">
+       {!user && <Link href="/signup">
           <Typography className={classes.links} variant="h6">
             Sign Up
           </Typography>
-        </Link>
-        <Link href="/login">
+        </Link>} 
+        {!user &&  <Link href="/login">
           <Typography className={classes.links} variant="h6">
             Login
           </Typography>
-        </Link>
+        </Link>}
+        {
+          user &&  <Button onClick={logout}>
+          <Typography className={classes.links} variant="h6">
+            Logout
+          </Typography>
+        </Button>
+        }
+       
         <IOSSwitch
           onChange={handleSwitch}
           inputProps={{ "aria-label": "secondary checkbox" }}

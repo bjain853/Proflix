@@ -1,17 +1,29 @@
-import React from "react";
-import SignUpForm from "../components/SignUpForm";
-import classes from '../styles/signup.module.css';
-
-
+import {useContext,useState} from 'react';
+import SignUpForm from '../components/SignUpForm';
+import {AuthContext} from '../stores/authContext';
 
 function SignUp() {
- 
+	const [ signUpInfo, setSignUpInfo ] = useState({
+		name: '',
+		email: '',
+		username: '',
+		password: ''
+	});
 
-  return (
-    <div className={classes.root}>
-      <SignUpForm />
-    </div>
-  );
+	const {signUp} = useContext(AuthContext);
+	
+	function handleSubmit(){
+		//signUp(signUpInfo);
+		signUp(signUpInfo);
+	};
+
+	return (
+		<SignUpForm
+			handleSubmit={handleSubmit}
+			setSignUpInfo={setSignUpInfo}
+			signUpInfo={signUpInfo}
+		/>
+	);
 }
 
 export default SignUp;
