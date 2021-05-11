@@ -1,8 +1,8 @@
-import {useContext,useState} from 'react';
+import { useContext, useState } from 'react';
 import SignUpForm from '../components/SignUpForm';
-import {AuthContext} from '../stores/authContext';
+import { AuthContext } from '../stores/authContext';
 
-function SignUp() {
+function SignUp(props) {
 	const [ signUpInfo, setSignUpInfo ] = useState({
 		name: '',
 		email: '',
@@ -10,20 +10,14 @@ function SignUp() {
 		password: ''
 	});
 
-	const {signUp} = useContext(AuthContext);
-	
-	function handleSubmit(){
-		//signUp(signUpInfo);
-		signUp(signUpInfo);
-	};
+	const { SignUp } = useContext(AuthContext);
 
-	return (
-		<SignUpForm
-			handleSubmit={handleSubmit}
-			setSignUpInfo={setSignUpInfo}
-			signUpInfo={signUpInfo}
-		/>
-	);
+	function handleSubmit() {
+		//signUp(signUpInfo);
+		SignUp(signUpInfo);
+	}
+
+	return <SignUpForm handleSubmit={handleSubmit} setSignUpInfo={setSignUpInfo} signUpInfo={signUpInfo} />;
 }
 
 export default SignUp;

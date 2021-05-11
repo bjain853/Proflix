@@ -12,7 +12,7 @@ const NavBar = (props) => {
   const handleSwitch = (event) => {
     setDark(event.target.checked);
   };
- const {user,logout} = React.useContext(AuthContext);
+ const {authenticated,logout} = React.useContext(AuthContext);
 
   return (
     <AppBar color="secondary">
@@ -22,18 +22,18 @@ const NavBar = (props) => {
             PROFLIX
           </Typography>
         </Link>
-       {!user && <Link href="/signup">
+       {!authenticated && <Link href="/signup">
           <Typography className={classes.links} variant="h6">
             Sign Up
           </Typography>
         </Link>} 
-        {!user &&  <Link href="/login">
+        {!authenticated &&  <Link href="/login">
           <Typography className={classes.links} variant="h6">
             Login
           </Typography>
         </Link>}
         {
-          user &&  <Button onClick={logout}>
+          authenticated &&  <Button onClick={logout}>
           <Typography className={classes.links} variant="h6">
             Logout
           </Typography>

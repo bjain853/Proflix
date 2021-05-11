@@ -2,19 +2,35 @@ const connection = require('./connection');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = {
+const UserActions = {
 	findUserByUsername: (username) => {
 		//returns either error or user object
 		return new Promise((resolve, reject) => {
 			connection
-				.query('SELECT * FROM users WHERE username = ?', [ username ], (err, result) => {
-					if (err) {
-						return reject(err);
+				.query('SELECT * FROM users WHERE username = ?', [ username ])
+				.then(([ rows ]) => {
+					if (rows.length === 0) {
+						return reject(new Error('Invalid username'));
+					}
+					const user = rows[0];
+					return resolve({
+						username: user.username,
+						password: user.password,
+						uId: user.userId
+					});
+				})
+				.catch((err) => reject(err));
+		});
+	},
+	findUserById: (id) => {
+		return new Promise((resolve, reject) => {
+			connection
+				.query('SELECT * FROM users WHERE userId = ?', [ id ])
+				.then((result) => {
+					if (result.length === 0) {
+						resolve({});
 					} else {
-						if (result.length === 0) {
-							return reject(new Error('Invalid username'));
-						}
-						return resolve({
+						resolve({
 							name: result[0].name,
 							username: result[0].username,
 							email: result[0].email,
@@ -22,34 +38,14 @@ module.exports = {
 							uId: result[0].uId
 						});
 					}
-				});
-				
-		});
-	},
-	findUserById: (id) => {
-		return new Promise((resolve, reject) => {
-			connection.query('SELECT * FROM users WHERE uId = ?', [ id ], (err, result) => {
-				if (err) {
-					reject(err);
-				}
-				if (result.length === 0) {
-					resolve({});
-				} else {
-					resolve({
-						name: result[0].name,
-						username: result[0].username,
-						email: result[0].email,
-						password: result[0].password,
-						uId: result[0].uId
-					});
-				}
-			});
+				})
+				.catch((err) => reject(err));
 		});
 	},
 	deleteUser: (uId) => {
 		//returns either the erorr or confirmation of being deleted
 		return new Promise((resolve, reject) => {
-			connection.execute('DELETE FROM users WHERE uId = ?', [ uId ], (err) => {
+			connection.execute('DELETE FROM users WHERE uId = ?', [ uId ]).catch((err) => {
 				if (err) {
 					return reject(err);
 				} else {
@@ -62,46 +58,31 @@ module.exports = {
 	updateInfo: (uId, field, update) => {
 		// returns either the error or the updated user Object
 		return new Promise((resolve, reject) => {
-			connection.quuery('UPDATE users SET ? = ? WHERE uId = ?', [ field, update, uId ], (err) => {
-				if (err) {
-					return reject(err);
-				} else {
+			connection
+				.query('UPDATE users SET ? = ? WHERE uId = ?', [ field, update, uId ])
+				.then(() => {
 					console.log('Updated the user');
 					return resolve();
-				}
-			});
+				})
+				.catch((err) => {
+					if (err) return reject(err);
+				});
 		});
 	},
 	addUser: (name, username, email, password) => {
 		return new Promise((resolve, reject) => {
-			try {
-				connection.query('SELECT * FROM users where username=?', [ username ], (error, results) => {
-					if (error) throw error;
-					if (results.length !== 0) throw new Error('User already registered');
-				});
-
-				const uId = uuidv4();
-				/**
+			const uId = uuidv4();
+			/**
                              * Generate hashed password
                              */
-				bcrypt.hash(password, 10, (err, hash) => {
-					if (err) throw err;
-					connection.execute(
-						'INSERT INTO users SELECT ?,?,?,?,?',
-						[ uId, username, name, email, hash ],
-						(error) => {
-							if (error) {
-								throw error;
-							} else {
-								console.log('User added');
-								resolve(true);
-							}
-						}
-					);
-				});
-			} catch (error) {
-				return reject(error);
-			}
+			bcrypt.hash(password, 10, (err, hash) => {
+				if (err) throw err;
+				connection
+					.execute('INSERT INTO users SELECT ?,?,?,?,?', [ uId, name, username, email, hash ])
+					.then(() => resolve({ uId, username, email, name, hash }))
+					.catch((error) => reject(error));
+			});
 		});
 	}
 };
+module.exports = UserActions;

@@ -1,29 +1,18 @@
-const express = require("express");
+const express = require('express');
 const server = express();
-const config = require("./config/config");
+const config = require('./config/config');
 const cors = require('cors');
-const authentication = require("./Routes/authentication");
-const session = require("express-session");
-const passport = require("passport");
-
+const authentication = require('./Routes/authentication');
 
 /****Middlewares***********/
-server.use(express.urlencoded({extended:false}));
-server.use(express.json())
-server.use(session({
-    secret:"authentication",
-    resave:true,
-    saveUninitialized:true,
-}));
-server.use(cors({origin: `http://localhost:3000`}));
-server.use(passport.initialize());
-server.use(passport.session());
-require("./config/passport")(passport);
+server.use(express.urlencoded({ extended: false }));
+server.use(express.json());
+server.use(cors({ origin: `http://localhost:3000`, withCredentials: true }));
 
 /****** Routes ****/
-server.use("/api",authentication);
+server.use('/api', authentication);
 
 /**Start server*****/
-server.listen(config.port,()=>{
-    console.log(`Listening @ Port:${config.port}`)
-})
+server.listen(config.port, () => {
+	console.log(`Listening @ Port:${config.port}`);
+});
