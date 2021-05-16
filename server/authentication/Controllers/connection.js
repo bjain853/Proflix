@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const config = require('../config/config');
+const redis = require('redis');
 try{
 
 const pool = mysql.createPool({
@@ -10,9 +11,10 @@ const pool = mysql.createPool({
 	database: config.sqlDb
 });
 
-console.log('Connected to Database...');
+const redisClient = redis.createClient();
+console.log('Connected to Databases...');
 
-module.exports = pool;
+module.exports = {pool,redisClient};
 }catch(err){
 console.log(err);
 module.exports=null;

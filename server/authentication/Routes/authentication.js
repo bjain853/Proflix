@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const UserActions = require('../Controllers/users');
 const { generateAccessToken, verifyToken } = require('../config/token');
-const redis = require('redis');
-const redisClient = redis.createClient();
+const {redisClient} = require('../Controllers/connection'); 
 const bcrypt = require('bcrypt');
 
 router.post('/login', async (req, res) => {

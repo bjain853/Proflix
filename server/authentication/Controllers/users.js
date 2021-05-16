@@ -1,4 +1,4 @@
-const connection = require('./connection');
+const {pool} = require('./connection');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
@@ -6,7 +6,7 @@ const UserActions = {
 	findUserByUsername: (username) => {
 		//returns either error or user object
 		return new Promise((resolve, reject) => {
-			connection
+			pool
 				.query('SELECT * FROM users WHERE username = ?', [ username ])
 				.then(([ rows ]) => {
 					if (rows.length === 0) {
@@ -24,7 +24,7 @@ const UserActions = {
 	},
 	findUserById: (id) => {
 		return new Promise((resolve, reject) => {
-			connection
+			pool
 				.query('SELECT * FROM users WHERE userId = ?', [ id ])
 				.then((result) => {
 					if (result.length === 0) {
@@ -45,7 +45,7 @@ const UserActions = {
 	deleteUser: (uId) => {
 		//returns either the erorr or confirmation of being deleted
 		return new Promise((resolve, reject) => {
-			connection.execute('DELETE FROM users WHERE uId = ?', [ uId ]).catch((err) => {
+			pool.execute('DELETE FROM users WHERE uId = ?', [ uId ]).catch((err) => {
 				if (err) {
 					return reject(err);
 				} else {
@@ -58,7 +58,7 @@ const UserActions = {
 	updateInfo: (uId, field, update) => {
 		// returns either the error or the updated user Object
 		return new Promise((resolve, reject) => {
-			connection
+			pool
 				.query('UPDATE users SET ? = ? WHERE uId = ?', [ field, update, uId ])
 				.then(() => {
 					console.log('Updated the user');
@@ -77,7 +77,7 @@ const UserActions = {
                              */
 			bcrypt.hash(password, 10, (err, hash) => {
 				if (err) throw err;
-				connection
+				pool
 					.execute('INSERT INTO users SELECT ?,?,?,?,?', [ uId, name, username, email, hash ])
 					.then(() => resolve({ uId, username, email, name, hash }))
 					.catch((error) => reject(error));
