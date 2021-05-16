@@ -13,12 +13,13 @@
 
 .logo:hover,
 .links:hover {
-	background-color:  #ad5389;;
-	background-image: linear-gradient(to right, #ad5389, #3c1053);;
+	background-image:  red;
+	/*background-image: linear-gradient(to right, #00416A, #E4E5E6);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	-moz-background-clip: text;
   -moz-text-fill-color: transparent;
+  */
   
 }
 

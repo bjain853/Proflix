@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserActions = require('../Controllers/users');
-const { generateAccessToken,verifyToken } = require('../config/token');
+const { generateAccessToken, verifyToken } = require('../config/token');
 const redis = require('redis');
 const redisClient = redis.createClient();
 const bcrypt = require('bcrypt');
@@ -32,15 +32,14 @@ router.post('/login', async (req, res) => {
 	}
 });
 
-router.get('/checkSession',(req,res)=>{
+router.get('/checkSession', (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
 		const valid = redisClient.get(token);
-		if(valid) return res.sendStatus(200);
+		if (valid) return res.sendStatus(200);
 		else return res.sendStatus(401);
 	}
-
 });
 
 router.post('/register', async (req, res) => {
@@ -71,8 +70,8 @@ router.get('/logout', (req, res) => {
 
 	if (authHeader) {
 		const token = authHeader.split(' ')[1];
-		redisClient.set(token, false);
-		return res.sendStatus(200);
+
+		if (verifyToken(token) && redisClient.set(token, false)) return res.sendStatus(200);
 	} else res.sendStatus(406);
 });
 

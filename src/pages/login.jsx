@@ -7,14 +7,14 @@ import { useRouter } from 'next/router'
 function Login(props) {
 
 	const router = useRouter();
-
 	const {Login} = useContext(AuthContext);
 
 	const [ loginInfo, setLoginInfo ] = React.useState({ username: '', password: '' });
 
 	function handleSubmit (){
-		Login(loginInfo);
-		
+		Login(loginInfo).then(loggedIn=>{
+			if(loggedIn) router.push('/dashboard');
+		});
 		
 	};
 
