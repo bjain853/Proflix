@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 
 export const AuthContext = createContext({
-	user: null,
+	authenticated: false,
 	Login: () => {},
 	SignUp: () => {},
 	Logout: () => {}
@@ -23,7 +23,7 @@ const AuthContextProvider = ({ children }) => {
 		if(!authenticated) router.push('/login');
 	}, [authenticated]);
 
-	const Login = async (user) => {
+	const Login = (user) => {
 		return login(user)
 			.then(() => {
 				setAuthentication(true);
@@ -32,7 +32,7 @@ const AuthContextProvider = ({ children }) => {
 			.catch((error) => console.error(error));
 	};
 
-	const SignUp = async (user) => {
+	const SignUp = (user) => {
 		return signUp(user)
 			.then(() => {
 				setAuthentication(true);
@@ -40,7 +40,7 @@ const AuthContextProvider = ({ children }) => {
 			})
 			.catch((error) => console.error(error));
 	};
-	const Logout = async () => {
+	const Logout = () => {
 		return logout()
 			.then((boolean) => {
 				if (boolean) {

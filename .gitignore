@@ -31,3 +31,5 @@ yarn-error.log*
 DBsetup.sql
 movies.csv
 movies.json
+
+services/searching_service/searching_env

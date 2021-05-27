@@ -5,6 +5,14 @@ const { generateAccessToken, verifyToken } = require('../config/token');
 const {redisClient} = require('../Controllers/connection'); 
 const bcrypt = require('bcrypt');
 
+router.use(function(req,res,next){
+
+console.log(`HTTP request with token ${req.headers.authorization}`);
+next();
+
+});
+
+
 router.post('/login', async (req, res) => {
 	const { username, password } = req.body;
 	if (!username || !password) throw new Error('Bad request');
@@ -17,16 +25,17 @@ router.post('/login', async (req, res) => {
 				redisClient.set(token, true);
 				res.status(200).json(token);
 			} else {
+				console.log("password incorrect");
 				throw new Error('Password/Username incorrect');
 			}
 		} else {
 			throw new Error(`Username ${username} doesn't exist`);
 		}
 	} catch (error) {
+		console.log(error);
 		let status = 500;
 		if (error.message === 'Bad request') status = 400;
-		if (error.message === `Username ${username} doesn't exist`) status = 404;
-		if (error.message === 'Password/Username incorrect') status = 401;
+		if (error.message === 'Password/Username Incorrect') status = 401;
 		res.status(status).json(error.message);
 	}
 });

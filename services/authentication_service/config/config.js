@@ -8,5 +8,6 @@ module.exports = {
 	appUrl: process.env.APP_URL || 'http://localhost:4000',
 	sqlHost: process.env.SQL_HOST || 'localhost',
 	accessToken: process.env.ACCESS_TOKEN || 'dbwfckhwbrfhjbrjwlhvnekn;kgem;',
-	refreshToken: process.env.REFRESH_TOKEN || 'kduhekwfkjvefnvfenf.mv'
+	refreshToken: process.env.REFRESH_TOKEN || 'kduhekwfkjvefnvfenf.mv',
+	users : process.env.USERS || "USERS",
 };
