@@ -33,3 +33,7 @@ movies.csv
 movies.json
 
 services/searching_service/searching_env
+services/streaming_service/streaming_service_env
+
+.vscode
+__pycache___
